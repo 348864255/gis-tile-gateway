@@ -361,8 +361,8 @@ When using this project, please comply with each tile source's terms of service:
 
 This project was **AI-assisted**. Grateful for the transformative power of the AI era:
 
-- 🧠 **DeepSeek** — V4 Flash by DeepSeek (深度求索)
-- 🤖 **Claude** — Opus 4.8 · Coder Desktop by Anthropic (1M+ context)
+- 🧠 **DeepSeek V4 Flash** — China's DeepSeek 1M long-context model (the actual AI model used)
+- 💻 **Claude Code** — Desktop IDE by Anthropic (the development tool used)
 
 With AI, what would have taken weeks was completed in hours — from architecture design, coding, debugging, to documentation.
 

@@ -361,8 +361,8 @@ gis-tile-gateway/
 
 本项目由 **AI 辅助编写**，感谢人工智能时代带来的技术变革：
 
-- 🧠 **DeepSeek** — 深度求索 V4 Flash 模型
-- 🤖 **Claude** — Anthropic Opus 4.8 · Coder Desktop（1M+ 上下文）
+- 🧠 **DeepSeek V4 Flash** — 中国深度求索 1M 长上下文模型（实际使用的 AI 模型）
+- 💻 **Claude Code** — Anthropic 桌面客户端（使用的 IDE 工具）
 
 在 AI 的帮助下，原本需要数周开发的项目在数小时内完成。从架构设计、代码编写、调试优化到文档撰写，AI 全程参与。
 
