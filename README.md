@@ -1,333 +1,149 @@
-# 🌍 GIS Tile Gateway
-
 <p align="center">
-  <img src="https://img.shields.io/badge/Cloudflare-Workers-orange?logo=cloudflare" alt="Cloudflare Workers">
-  <img src="https://img.shields.io/badge/QGIS-4.0+-brightgreen?logo=qgis" alt="QGIS">
-  <img src="https://img.shields.io/badge/License-MIT-blue" alt="License">
-  <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen" alt="PRs Welcome">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/GIS%20Tile%20Gateway-v1.0.0-8b5cf6?style=for-the-badge&logo=cloudflare&logoColor=white&labelColor=1e293b">
+    <img src="https://img.shields.io/badge/GIS%20Tile%20Gateway-v1.0.0-8b5cf6?style=for-the-badge&logo=cloudflare&logoColor=white&labelColor=1e293b" alt="GIS Tile Gateway">
+  </picture>
 </p>
 
-> **Cloudflare Workers 驱动的 GIS 瓦片反向代理网关**
-> **A Cloudflare Workers powered GIS tile reverse proxy gateway**
-
-[English](#english) | [中文](#chinese)
-
----
-
-## 🇨🇳 中文
-
-### 📖 项目简介
-
-**GIS Tile Gateway** 是一个基于 Cloudflare Workers 的 GIS 瓦片反向代理网关，让你可以在 QGIS、奥维地图等 GIS 软件中**直接使用 Google 卫星影像、Esri 卫星、Bing 卫星、天地图等图源**，无需科学上网。
-
-#### 核心功能
-
-| 功能 | 说明 |
-|------|------|
-| 🚀 **智能加速** | 自动选择最快 Cloudflare 节点中转 |
-| 🔄 **自动回退** | Google 超时自动切到 Esri/Bing |
-| 🗺️ **多图源** | 支持 Google / Esri / Bing / 天地图 / NASA 等 |
-| 💾 **多层缓存** | Memory → Edge Cache → KV → R2 |
-| 🔐 **Token 安全** | 简单有效的访问控制 |
-| 🎯 **QGIS 原生支持** | 提供 XML 配置，一键导入 |
-| 🌐 **全球加速** | Cloudflare 310+ 城市节点 |
-
-#### 架构图
+<p align="center">
+  <a href="https://github.com/348864255/gis-tile-gateway/stargazers">
+    <img src="https://img.shields.io/github/stars/348864255/gis-tile-gateway?style=flat-square&logo=github" alt="GitHub Stars">
+  </a>
+  <a href="https://github.com/348864255/gis-tile-gateway/network">
+    <img src="https://img.shields.io/github/forks/348864255/gis-tile-gateway?style=flat-square&logo=github" alt="GitHub Forks">
+  </a>
+  <a href="https://github.com/348864255/gis-tile-gateway/issues">
+    <img src="https://img.shields.io/github/issues/348864255/gis-tile-gateway?style=flat-square&logo=github" alt="GitHub Issues">
+  </a>
+  <img src="https://img.shields.io/badge/Cloudflare-Workers-orange?style=flat-square&logo=cloudflare" alt="Cloudflare Workers">
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square" alt="PRs Welcome">
+</p>
 
 <p align="center">
-  <img src="architecture.svg" alt="GIS Tile Gateway Architecture" width="700">
+  <b>A Cloudflare Workers powered GIS tile reverse proxy gateway</b><br>
+  <i>Cloudflare Workers 驱动的 GIS 瓦片反向代理网关</i><br>
+  <a href="README_zh.md">🇨🇳 中文版</a>
 </p>
 
 ---
 
-### 🚀 快速开始
+## 📋 Table of Contents
 
-#### 前提条件
-
-- 一个 **Cloudflare 账号**（免费版即可）→ [注册](https://dash.cloudflare.com/sign-up)
-- 一个 **域名**（托管在 Cloudflare）→ [教程](https://developers.cloudflare.com/fundamentals/get-started/setup/add-a-domain/)
-- 一个 **QGIS** 软件（可选）→ [下载](https://qgis.org/)
-
-#### 部署步骤（共 5 步，约 10 分钟）
-
-##### 第 1 步：DNS 添加 4 条记录
-
-登录 Cloudflare Dashboard → 你的域名 → **DNS** → **添加记录**
-
-| 类型 | 名称 | IPv4 地址 | 代理 |
-|------|------|-----------|------|
-| A | `hk-map` | `192.0.2.1` | ☁️ 橙色 |
-| A | `jp-map` | `192.0.2.1` | ☁️ 橙色 |
-| A | `sg-map` | `192.0.2.1` | ☁️ 橙色 |
-| A | `auto-map` | `192.0.2.1` | ☁️ 橙色 |
-
-> IP 可以随便填，橙云模式下 Cloudflare 会忽略实际 IP。
-
-##### 第 2 步：创建 Worker 1 — gis-tile-worker
-
-Cloudflare Dashboard → **Workers & Pages** → **创建应用程序** → **创建 Worker**
-
-- 名称：`gis-tile-worker`
-- 删除默认代码，粘贴 `work.js` 全部内容
-- 点击 **部署**
-
-##### 第 3 步：创建 Worker 2 — auto-map-worker
-
-再次点击 **创建应用程序** → **创建 Worker**
-
-- 名称：`auto-map-worker`
-- 粘贴 `auto-map-worker.js` 全部内容
-- 点击 **部署**
-
-##### 第 4 步：添加路由
-
-进入 **gis-tile-worker** → **触发器** → **路由** → **添加路由**
-
-添加 3 条路由：
-
-| 路由 | Worker |
-|------|--------|
-| `hk-map.YOUR_DOMAIN/*` | gis-tile-worker |
-| `jp-map.YOUR_DOMAIN/*` | gis-tile-worker |
-| `sg-map.YOUR_DOMAIN/*` | gis-tile-worker |
-
-进入 **auto-map-worker** → **触发器** → **路由** → **添加路由**
-
-| 路由 | Worker |
-|------|--------|
-| `auto-map.YOUR_DOMAIN/*` | auto-map-worker |
-
-> 把 `YOUR_DOMAIN` 替换成你的实际域名，例如 `ycwx.kdns.fr`
-
-##### 第 5 步：验证部署
-
-浏览器打开：
-
-```
-https://auto-map.YOUR_DOMAIN/health?token=YOUR_TOKEN
-```
-
-看到 `{"status":"ok"}` 就说明部署成功。
-
-测试瓦片（浏览器会显示一张卫星图）：
-
-```
-https://auto-map.YOUR_DOMAIN/google?lyrs=s&x=257&y=257&z=9&token=YOUR_TOKEN
-```
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Quick Start](#-quick-start)
+- [QGIS Setup](#-qgis-setup)
+- [Configuration](#%EF%B8%8F-configuration)
+- [Advanced Features](#-advanced-features)
+- [Available Tile Sources](#-available-tile-sources)
+- [Troubleshooting](#-troubleshooting)
+- [File Structure](#-file-structure)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
 
 ---
 
-### 🗺️ QGIS 配置
-
-#### 方式一：导入 XML（推荐）
-
-1. 下载 `QGIS_Tile_Collection.xml`
-2. 用文本编辑器打开，将所有 `YOUR_DOMAIN` 替换为你的实际域名
-3. 将所有 `YOUR_TOKEN` 替换为你的实际 Token
-4. QGIS → **浏览器面板** → 右键 **XYZ Tiles** → **加载连接** → 选择 XML
-
-#### 方式二：手动添加
-
-QGIS → **浏览器面板** → 右键 **XYZ Tiles** → **新建连接**
-
-```
-名称: 自动卫星
-URL: https://auto-map.YOUR_DOMAIN/auto-satellite?x={x}&y={y}&z={z}&token=YOUR_TOKEN
-最大缩放级别: 19
-```
-
----
-
-### 🔧 配置说明
-
-#### 环境变量
-
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| `MY_TOKEN` | 访问令牌 | `YOUR_TOKEN` |
-| `TILE_CACHE` | KV 命名空间绑定（可选） | — |
-| `TILE_R2` | R2 存储桶绑定（可选） | — |
-
-#### Token 安全
-
-所有瓦片请求必须在 URL 末尾携带 `token` 参数：
-
-```
-https://auto-map.YOUR_DOMAIN/google?lyrs=s&x=257&y=257&z=9&token=YOUR_TOKEN
-```
-
-建议将 `YOUR_TOKEN` 改为一个复杂的随机字符串。
-
----
-
-### ☁️ 高级功能
-
-#### 绑定 KV 持久缓存（可选）
-
-1. Cloudflare → **Workers & Pages** → **KV** → **创建命名空间**
-   - 名称：`TILE_CACHE`
-2. 进入 **auto-map-worker** → **设置** → **变量** → **KV 命名空间绑定**
-   - 变量名称：`TILE_CACHE`
-   - KV 命名空间：`TILE_CACHE`
-3. 同样的操作绑定到 **gis-tile-worker**
-
-#### 绑定 R2 永久仓库（可选）
-
-1. Cloudflare → **R2** → **创建存储桶**
-   - 名称：`tile-cache`
-2. 进入 **auto-map-worker** → **设置** → **变量** → **R2 存储桶绑定**
-   - 变量名称：`TILE_R2`
-   - 存储桶：`tile-cache`
-
-#### 使用 wrangler CLI 部署
-
-```bash
-# 安装 wrangler
-npm install -g wrangler
-
-# 登录
-wrangler login
-
-# 部署 gis-tile-worker
-wrangler deploy -c wrangler-gis.toml
-
-# 部署 auto-map-worker
-wrangler deploy -c wrangler-auto.toml
-```
-
----
-
-### 📋 可用图源
-
-| 源 | 类型 | 坐标系 | 说明 |
-|------|------|--------|------|
-| 自动卫星 | 卫星影像 | WGS-84 | 自动选 Google/Esri/Bing 最快 |
-| Google 卫星 | 卫星影像 | WGS-84 | 高分辨率 |
-| Google 卫星混合 | 卫星+标注 | WGS-84 | 带地名标注 |
-| Google 历史影像 | 历史卫星 | WGS-84 | 时间回溯 |
-| Google 矢量 | 矢量地图 | WGS-84 | 道路/建筑 |
-| Google 地形 | 地形图 | WGS-84 | 等高线 |
-| Esri 卫星 | 卫星影像 | WGS-84 | 全球覆盖 |
-| Bing 卫星 | 卫星影像 | WGS-84 | 高分辨率 |
-| 天地图卫星 | 卫星影像 | **CGCS2000** | 国内首选 |
-| 天地图矢量 | 矢量地图 | **CGCS2000** | 国内道路/地名 |
-| NASA MODIS | 卫星影像 | EPSG:4326 | 每日更新 |
-| Mapzen 地形 | DEM | WGS-84 | 高程数据 |
-
----
-
-### ⚠️ 常见问题
-
-#### 瓦片加载超时
-
-首次加载需要从上游图源抓取，等待 5~30 秒是正常的。第二次加载同一区域会从缓存返回，速度提升 5~10 倍。
-
-#### 天地图无法加载
-
-天地图使用浏览器端 API Key，有日调用量限制。建议：
-1. 去 [天地图控制台](https://console.tianditu.gov.cn) 申请自己的 Key
-2. 在 `work.js` 和 `auto-map-worker.js` 中替换 `YOUR_TIANDITU_KEY`
-
-#### 自动卫星返回 503
-
-三个图源都失败了。检查 Worker 日志：
-**gis-tile-worker** → **日志** → 查看 Google/Esri/Bing 的失败原因
-
-#### 如何修改 Token
-
-在 `work.js` 和 `auto-map-worker.js` 中搜索 `YOUR_TOKEN`，替换为你的自定义 Token，然后重新部署。
-
----
-
-### 📄 文件说明
-
-| 文件 | 说明 |
-|------|------|
-| `work.js` | 主瓦片服务 Worker（路由到 hk/jp/sg） |
-| `auto-map-worker.js` | 自动入口选择 Worker（路由到 auto-map） |
-| `QGIS_Tile_Collection.xml` | QGIS 导入配置文件 |
-| `wrangler-gis.toml` | wrangler CLI 配置（gis-tile-worker） |
-| `wrangler-auto.toml` | wrangler CLI 配置（auto-map-worker） |
-| `architecture.svg` | 架构图 |
-| `LICENSE` | MIT 开源协议 |
-
----
-
-### 📜 开源协议
-
-本项目基于 MIT 协议开源。使用本项目时请遵守各图源的使用条款：
-
-- Google 地图：Google Maps/Google Earth Additional Terms of Service
-- Esri：ArcGIS Online 使用条款
-- Bing：Bing Maps 使用条款
-- 天地图：天地图服务条款
-- NASA：NASA Open Data Policy
-
----
-
-## 🇬🇧 English
-
-### 📖 Introduction
-
-**GIS Tile Gateway** is a Cloudflare Workers-based GIS tile reverse proxy gateway. It allows you to use Google Satellite, Esri, Bing, Tianditu and other tile sources directly in QGIS, OvitalMap, and other GIS software without a VPN.
-
-#### Features
+## 🚀 Features
 
 | Feature | Description |
 |---------|-------------|
-| 🚀 **Smart Acceleration** | Auto-select fastest Cloudflare edge node |
-| 🔄 **Auto Fallback** | If Google times out, auto-switch to Esri/Bing |
-| 🗺️ **Multiple Sources** | Google / Esri / Bing / Tianditu / NASA |
-| 💾 **Multi-layer Cache** | Memory → Edge Cache → KV → R2 |
-| 🔐 **Token Security** | Simple but effective access control |
-| 🎯 **QGIS Native** | One-click XML import |
+| **Smart Acceleration** | Auto-selects fastest Cloudflare edge node (HKG/NRT/SIN) |
+| **Auto Fallback** | Google times out? Auto-switches to Esri or Bing |
+| **Multiple Sources** | Google / Esri / Bing / Tianditu / NASA / Mapy.cz |
+| **Multi-layer Cache** | Memory → Edge Cache → KV → R2 |
+| **Token Security** | Simple but effective access control |
+| **QGIS Native** | One-click XML import for QGIS |
+| **Open Source** | MIT licensed, free to use and modify |
 
-#### Architecture
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[QGIS / GIS Software] --> B{auto-map.YOUR_DOMAIN}
+    B --> C[hk-map 香港 HKG]
+    B --> D[jp-map 东京 NRT]
+    B --> E[sg-map 新加坡 SIN]
+    C --> F[Cloudflare Workers]
+    D --> F
+    E --> F
+    F --> G[Cache Layer]
+    G --> H[Google Maps]
+    G --> I[Esri ArcGIS]
+    G --> J[Bing Maps]
+    G --> K[Tianditu]
+    G --> L[NASA MODIS]
+    
+    style A fill:#3b82f6,color:#fff
+    style B fill:#22c55e,color:#fff
+    style C fill:#334155,color:#fff
+    style D fill:#334155,color:#fff
+    style E fill:#334155,color:#fff
+    style F fill:#8b5cf6,color:#fff
+    style G fill:#f59e0b,color:#fff
+    style H fill:#1e40af,color:#fff
+    style I fill:#14532d,color:#fff
+    style J fill:#1e3a5f,color:#fff
+    style K fill:#3b0764,color:#fff
+    style L fill:#1c1917,color:#fff
+```
 
 <p align="center">
-  <img src="architecture.svg" alt="GIS Tile Gateway Architecture" width="700">
+  <i>Or view the <a href="architecture.svg">full architecture diagram</a></i>
 </p>
 
 ---
 
-### 🚀 Quick Start
+## 🚀 Quick Start
 
-#### Prerequisites
+### Prerequisites
 
-- A **Cloudflare account** (free tier) → [Sign up](https://dash.cloudflare.com/sign-up)
-- A **domain** hosted on Cloudflare → [Guide](https://developers.cloudflare.com/fundamentals/get-started/setup/add-a-domain/)
-- **QGIS** (optional) → [Download](https://qgis.org/)
+- ☁️ A **Cloudflare account** (free tier works) → [Sign up](https://dash.cloudflare.com/sign-up)
+- 🌐 A **domain** hosted on Cloudflare → [Guide](https://developers.cloudflare.com/fundamentals/get-started/setup/add-a-domain/)
+- 🗺️ **QGIS** (optional) → [Download](https://qgis.org/)
 
-#### Deployment (5 steps, ~10 minutes)
+### Deployment
 
-**Step 1: Add 4 DNS records**
+<details>
+<summary><b>Step 1: Add 4 DNS records</b> (2 minutes)</summary>
 
 Cloudflare Dashboard → Your domain → **DNS** → **Add record**
 
 | Type | Name | IPv4 | Proxy |
 |------|------|------|-------|
-| A | `hk-map` | `192.0.2.1` | ☁️ Proxied |
-| A | `jp-map` | `192.0.2.1` | ☁️ Proxied |
-| A | `sg-map` | `192.0.2.1` | ☁️ Proxied |
-| A | `auto-map` | `192.0.2.1` | ☁️ Proxied |
+| `A` | `hk-map` | `192.0.2.1` | ✅ Proxied |
+| `A` | `jp-map` | `192.0.2.1` | ✅ Proxied |
+| `A` | `sg-map` | `192.0.2.1` | ✅ Proxied |
+| `A` | `auto-map` | `192.0.2.1` | ✅ Proxied |
 
-**Step 2: Create Worker 1 — gis-tile-worker**
+> The IP doesn't matter — Cloudflare ignores it when proxied (orange cloud).
+>
+</details>
 
-**Workers & Pages** → **Create application** → **Create Worker**
+<details>
+<summary><b>Step 2: Create Worker 1 — gis-tile-worker</b> (2 minutes)</summary>
 
-- Name: `gis-tile-worker`
-- Paste `work.js` content
-- Click **Deploy**
+1. Go to **Workers & Pages** → **Create application** → **Create Worker**
+2. Name: `gis-tile-worker`
+3. Delete default code, paste `work.js` content
+4. Click **Deploy**
 
-**Step 3: Create Worker 2 — auto-map-worker**
+</details>
 
-**Create application** → **Create Worker**
+<details>
+<summary><b>Step 3: Create Worker 2 — auto-map-worker</b> (2 minutes)</summary>
 
-- Name: `auto-map-worker`
-- Paste `auto-map-worker.js` content
-- Click **Deploy**
+1. **Create application** → **Create Worker**
+2. Name: `auto-map-worker`
+3. Paste `auto-map-worker.js` content
+4. Click **Deploy**
 
-**Step 4: Add routes**
+</details>
+
+<details>
+<summary><b>Step 4: Add routes</b> (2 minutes)</summary>
 
 **gis-tile-worker** → **Triggers** → **Routes** → **Add route**
 
@@ -343,26 +159,222 @@ Cloudflare Dashboard → Your domain → **DNS** → **Add record**
 |-------|--------|
 | `auto-map.YOUR_DOMAIN/*` | auto-map-worker |
 
-**Step 5: Verify**
+> Replace `YOUR_DOMAIN` with your actual domain (e.g., `example.com`)
 
-Open in browser:
+</details>
 
-```
+<details>
+<summary><b>Step 5: Verify</b> (1 minute)</summary>
+
+Open in your browser:
+
+```bash
+# Health check
 https://auto-map.YOUR_DOMAIN/health?token=YOUR_TOKEN
+
+# Expected response
+{"status":"ok","service":"GIS Tile Gateway v1.0","colo":"HKG"}
+
+# Test a tile (should show a satellite image)
+https://auto-map.YOUR_DOMAIN/google?lyrs=s&x=257&y=257&z=9&token=YOUR_TOKEN
 ```
 
-Expected: `{"status":"ok"}`
+</details>
 
 ---
 
-### 🗺️ QGIS Setup
+## 🗺️ QGIS Setup
 
-Download `QGIS_Tile_Collection.xml`, replace `YOUR_DOMAIN` and `YOUR_TOKEN`, then:
+### Method 1: Import XML (Recommended)
 
-QGIS → **Browser** → Right-click **XYZ Tiles** → **Load Connections** → Select XML
+```bash
+# 1. Download QGIS_Tile_Collection.xml
+# 2. Replace YOUR_DOMAIN and YOUR_TOKEN with your actual values
+# 3. In QGIS:
+```
+
+QGIS → **Browser** → Right-click **XYZ Tiles** → **Load Connections** → Select the XML file
+
+### Method 2: Manual Add
+
+QGIS → **Browser** → Right-click **XYZ Tiles** → **New Connection**
+
+| Field | Value |
+|-------|-------|
+| Name | `Auto Satellite` |
+| URL | `https://auto-map.YOUR_DOMAIN/auto-satellite?x={x}&y={y}&z={z}&token=YOUR_TOKEN` |
+| Max Zoom | `19` |
 
 ---
 
-### 📄 License
+## ⚙️ Configuration
 
-MIT License. Please comply with each tile source's terms of service when using this project.
+### Environment Variables
+
+| Variable | Type | Description | Default |
+|----------|------|-------------|---------|
+| `MY_TOKEN` | Config | Access token | `YOUR_TOKEN` |
+| `TILE_CACHE` | KV Binding | Persistent cache (optional) | — |
+| `TILE_R2` | R2 Binding | Permanent storage (optional) | — |
+
+### Token Security
+
+All tile requests must include the `token` parameter:
+
+```url
+https://auto-map.YOUR_DOMAIN/google?lyrs=s&x=257&y=257&z=9&token=YOUR_TOKEN
+```
+
+> ⚠️ **Security tip**: Change `YOUR_TOKEN` to a random string. Use a password generator for best results.
+
+---
+
+## ☁️ Advanced Features
+
+<details>
+<summary><b>Bind KV Persistent Cache</b></summary>
+
+1. Cloudflare → **Workers & Pages** → **KV** → **Create namespace** → Name: `TILE_CACHE`
+2. **auto-map-worker** → **Settings** → **Variables** → **KV Namespace Bindings**
+   - Variable name: `TILE_CACHE` → KV namespace: `TILE_CACHE`
+3. Repeat for **gis-tile-worker**
+
+</details>
+
+<details>
+<summary><b>Bind R2 Permanent Storage</b></summary>
+
+1. Cloudflare → **R2** → **Create bucket** → Name: `tile-cache`
+2. **auto-map-worker** → **Settings** → **Variables** → **R2 Bucket Bindings**
+   - Variable name: `TILE_R2` → Bucket: `tile-cache`
+
+</details>
+
+<details>
+<summary><b>Deploy with wrangler CLI</b></summary>
+
+```bash
+# Install wrangler
+npm install -g wrangler
+
+# Login to Cloudflare
+wrangler login
+
+# Deploy workers
+wrangler deploy -c wrangler-gis.toml
+wrangler deploy -c wrangler-auto.toml
+```
+
+</details>
+
+---
+
+## 📋 Available Tile Sources
+
+| Source | Type | CRS | Description |
+|--------|------|-----|-------------|
+| **Auto Satellite** ⭐ | Satellite | WGS-84 | Auto-selects fastest source |
+| Google Satellite | Satellite | WGS-84 | High resolution |
+| Google Hybrid | Hybrid | WGS-84 | Satellite + labels |
+| Google History | Historical | WGS-84 | Time travel imagery |
+| Google Vector | Vector | WGS-84 | Roads & buildings |
+| Google Terrain | Terrain | WGS-84 | Contour lines |
+| Esri Satellite | Satellite | WGS-84 | Global coverage |
+| Bing Satellite | Satellite | WGS-84 | High resolution |
+| **Tianditu Satellite** | Satellite | **CGCS2000** | China preferred |
+| **Tianditu Vector** | Vector | **CGCS2000** | China roads/places |
+| NASA MODIS | Satellite | EPSG:4326 | Daily updated |
+| Mapzen Terrain | DEM | WGS-84 | Elevation data |
+
+---
+
+## ⚠️ Troubleshooting
+
+<details>
+<summary><b>🔄 Tile load timeout</b></summary>
+
+First load fetches from upstream — 5~30 seconds is normal.  
+Subsequent loads for the same area are served from cache (0.2~0.5s).
+
+</details>
+
+<details>
+<summary><b>🇨🇳 Tianditu not loading</b></summary>
+
+Tianditu uses a browser-side API Key with daily usage limits.
+
+1. Get your own key at [Tianditu Console](https://console.tianditu.gov.cn)
+2. Replace `YOUR_TIANDITU_KEY` in `work.js` and `auto-map-worker.js`
+
+</details>
+
+<details>
+<summary><b>❌ Auto Satellite returns 503</b></summary>
+
+All three providers failed. Check Worker logs:  
+**gis-tile-worker** → **Logs** → Check Google/Esri/Bing errors
+
+</details>
+
+<details>
+<summary><b>🔑 How to change the token</b></summary>
+
+Search for `YOUR_TOKEN` in `work.js` and `auto-map-worker.js`, replace with your custom token, then redeploy both workers.
+
+</details>
+
+---
+
+## 📁 File Structure
+
+```
+gis-tile-gateway/
+├── README.md                 # English documentation (this file)
+├── README_zh.md              # Chinese documentation
+├── architecture.svg          # Architecture diagram
+├── work.js                   # Main tile worker (routes: hk/jp/sg)
+├── auto-map-worker.js        # Auto entry selector (route: auto-map)
+├── QGIS_Tile_Collection.xml  # QGIS import configuration
+├── wrangler-gis.toml         # wrangler config for gis-tile-worker
+├── wrangler-auto.toml        # wrangler config for auto-map-worker
+└── LICENSE                   # MIT License
+```
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.  
+When using this project, please comply with each tile source's terms of service:
+
+| Source | Terms |
+|--------|-------|
+| Google Maps | [Google Maps/Google Earth Additional Terms of Service](https://cloud.google.com/maps-platform/terms) |
+| Esri | [ArcGIS Online Terms of Service](https://www.esri.com/en-us/legal/terms/full-master-agreement) |
+| Bing Maps | [Bing Maps Terms of Service](https://www.microsoft.com/en-us/maps/product/terms) |
+| Tianditu | [天地图服务条款](https://www.tianditu.gov.cn/about/term.html) |
+| NASA | [NASA Open Data Policy](https://www.nasa.gov/open/) |
+
+---
+
+## 🤖 Acknowledgments
+
+This project was **AI-assisted**. Grateful for the transformative power of the AI era:
+
+- 🧠 **DeepSeek** — V4 Flash by DeepSeek (深度求索)
+- 🤖 **Claude** — Opus 4.8 · Coder Desktop by Anthropic (1M+ context)
+
+With AI, what would have taken weeks was completed in hours — from architecture design, coding, debugging, to documentation.
+
+**Salute to the AI era — where creativity is no longer limited by technical barriers.**
+
+---
+
+<p align="center">
+  <sub>Made with ❤️ for GIS & Remote Sensing</sub><br>
+  <sub>
+    <a href="https://github.com/348864255/gis-tile-gateway/issues">Report Bug</a> ·
+    <a href="https://github.com/348864255/gis-tile-gateway/issues">Request Feature</a> ·
+    <a href="README_zh.md">🇨🇳 中文版</a>
+  </sub>
+</p>
