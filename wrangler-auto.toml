@@ -1,0 +1,10 @@
+name = "auto-map-worker"
+main = "auto-map-worker.js"
+compatibility_date = "2025-01-01"
+
+# ==================== Routes ====================
+# Replace YOUR_DOMAIN with your actual domain
+
+routes = [
+  { pattern = "auto-map.YOUR_DOMAIN/*", custom_domain = true }
+]

@@ -1,0 +1,28 @@
+name = "gis-tile-worker"
+main = "work.js"
+compatibility_date = "2025-01-01"
+
+# ==================== Routes (3 entry nodes) ====================
+# Replace YOUR_DOMAIN with your actual domain
+
+routes = [
+  { pattern = "hk-map.YOUR_DOMAIN/*", custom_domain = true },
+  { pattern = "jp-map.YOUR_DOMAIN/*", custom_domain = true },
+  { pattern = "sg-map.YOUR_DOMAIN/*", custom_domain = true }
+]
+
+# ==================== KV Bindings (optional) ====================
+# Create KV namespace first:
+#   npx wrangler kv namespace create TILE_CACHE
+# Then uncomment and fill in the ID:
+# kv_namespaces = [
+#   { binding = "TILE_CACHE", id = "your-kv-namespace-id" }
+# ]
+
+# ==================== R2 Bindings (optional) ====================
+# Create R2 bucket first:
+#   npx wrangler r2 bucket create tile-cache
+# Then uncomment:
+# r2_buckets = [
+#   { binding = "TILE_R2", bucket_name = "tile-cache" }
+# ]

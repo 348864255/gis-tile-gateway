@@ -1,0 +1,65 @@
+<!DOCTYPE connections>
+<qgsXYZTilesConnections xmlns:http-header="https://qgis.org/http-header" version="1.0">
+
+    <!-- ================================================================== -->
+    <!-- Proxy (via Cloudflare Worker)                                       -->
+    <!-- Replace YOUR_DOMAIN and YOUR_TOKEN before use                       -->
+    <!-- ================================================================== -->
+
+    <!-- ========== Auto-satellite (smart fallback) ========== -->
+    <xyztiles zmin="0" name="【Proxy】Auto Satellite" referer="" zmax="19" url="https://auto-map.YOUR_DOMAIN/auto-satellite?x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Google Satellite ========== -->
+    <xyztiles zmin="0" name="【Proxy】Google Satellite" referer="https://www.google.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/google?lyrs=s&amp;x={x}&amp;y={y}&amp;z={z}&amp;scale=1&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.google.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="【Proxy】Google Hybrid" referer="https://www.google.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/google?lyrs=y&amp;x={x}&amp;y={y}&amp;z={z}&amp;scale=1&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.google.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Google History ========== -->
+    <xyztiles zmin="0" name="【Proxy】Google History (Satellite)" referer="https://www.google.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/google-history?text=0&amp;x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.google.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="【Proxy】Google History (Hybrid)" referer="https://www.google.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/google-history?text=1&amp;x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.google.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Google Vector/Terrain ========== -->
+    <xyztiles zmin="0" name="【Proxy】Google Vector" referer="https://www.google.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/google?lyrs=m&amp;x={x}&amp;y={y}&amp;z={z}&amp;scale=1&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.google.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="【Proxy】Google Terrain" referer="https://www.google.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/google?lyrs=t&amp;x={x}&amp;y={y}&amp;z={z}&amp;scale=1&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.google.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="【Proxy】Google Terrain Hybrid" referer="https://www.google.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/google?lyrs=p&amp;x={x}&amp;y={y}&amp;z={z}&amp;scale=1&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.google.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Satellite Imagery ========== -->
+    <xyztiles zmin="0" name="【Proxy】Esri Satellite" referer="https://www.arcgis.com" zmax="17" url="https://auto-map.YOUR_DOMAIN/esri?x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.arcgis.com" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="1" name="【Proxy】Bing Satellite" referer="https://www.bing.com/maps" zmax="19" url="https://auto-map.YOUR_DOMAIN/bing?x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="https://www.bing.com/maps" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="【Proxy】NASA MODIS (EPSG4326)" referer="" zmax="8" url="https://auto-map.YOUR_DOMAIN/nasa?x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Tianditu (CGCS2000 ≈ WGS-84, China) ========== -->
+    <xyztiles zmin="0" name="【Proxy】Tianditu Satellite" referer="" zmax="18" url="https://auto-map.YOUR_DOMAIN/tianditu?type=img&amp;x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="【Proxy】Tianditu Vector" referer="" zmax="18" url="https://auto-map.YOUR_DOMAIN/tianditu?type=vec&amp;x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="【Proxy】Tianditu Label" referer="" zmax="18" url="https://auto-map.YOUR_DOMAIN/tianditu?type=cva&amp;x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Other ========== -->
+    <xyztiles zmin="0" name="【Proxy】Mapy.cz" referer="https://mapserver.mapy.cz" zmax="20" url="https://auto-map.YOUR_DOMAIN/mapy?x={x}&amp;y={y}&amp;z={z}&amp;token=YOUR_TOKEN" password="" http-header:referer="https://mapserver.mapy.cz" username="" tilePixelRatio="0" authcfg=""/>
+
+
+    <!-- ================================================================== -->
+    <!-- Direct (no proxy needed, accessible from China)                     -->
+    <!-- ================================================================== -->
+
+    <!-- ========== CartoDB ========== -->
+    <xyztiles zmin="0" name="CartoDB Light" referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." zmax="20" url="https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png" password="" http-header:referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="CartoDB Light (No Labels)" referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." zmax="20" url="https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png" password="" http-header:referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="CartoDB Dark" referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." zmax="20" url="https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png" password="" http-header:referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="CartoDB Dark (No Labels)" referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." zmax="20" url="https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png" password="" http-header:referer="Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL." username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Esri Direct ========== -->
+    <xyztiles zmin="0" name="Esri Standard" referer="Requires ArcGIS Online subscription" zmax="17" url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}" password="" http-header:referer="Requires ArcGIS Online subscription" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="Esri Topo" referer="Requires ArcGIS Online subscription" zmax="20" url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}" password="" http-header:referer="Requires ArcGIS Online subscription" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="Esri Dark Gray" referer="Requires ArcGIS Online subscription" zmax="16" url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" password="" http-header:referer="Requires ArcGIS Online subscription" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="Esri Light Gray" referer="Requires ArcGIS Online subscription" zmax="16" url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}" password="" http-header:referer="Requires ArcGIS Online subscription" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="Esri Hillshade" referer="Requires ArcGIS Online subscription" zmax="12" url="https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}" password="" http-header:referer="Requires ArcGIS Online subscription" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="Esri Transportation" referer="Requires ArcGIS Online subscription" zmax="20" url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}" password="" http-header:referer="Requires ArcGIS Online subscription" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="Esri Ocean" referer="Requires ArcGIS Online subscription" zmax="10" url="https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}" password="" http-header:referer="Requires ArcGIS Online subscription" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Strava Heatmap ========== -->
+    <xyztiles zmin="0" name="Strava Heatmap (All)" referer="OpenStreetMap contributors, under ODbL" zmax="15" url="https://heatmap-external-b.strava.com/tiles/all/bluered/{z}/{x}/{y}.png" password="" http-header:referer="OpenStreetMap contributors, under ODbL" username="" tilePixelRatio="0" authcfg=""/>
+    <xyztiles zmin="0" name="Strava Heatmap (Run)" referer="OpenStreetMap contributors, under ODbL" zmax="15" url="https://heatmap-external-b.strava.com/tiles/run/bluered/{z}/{x}/{y}.png" password="" http-header:referer="OpenStreetMap contributors, under ODbL" username="" tilePixelRatio="0" authcfg=""/>
+
+    <!-- ========== Elevation ========== -->
+    <xyztiles zmin="0" name="Mapzen Global Terrain" zmax="15" url="https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png" password="" username="" tilePixelRatio="0" authcfg=""/>
+
+</qgsXYZTilesConnections>
